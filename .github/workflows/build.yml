@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: arc-hot
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
