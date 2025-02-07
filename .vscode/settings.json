@@ -1,0 +1,12 @@
+{
+    "cSpell.enabled": true,
+    "cSpell.language": "es,en",
+    "npm.packageManager": "yarn",
+    "cSpell.words": [
+        "idempotente",
+        "monitoreo",
+        "observabilidad",
+        "OWASP",
+        "quantitativos"
+    ]
+}

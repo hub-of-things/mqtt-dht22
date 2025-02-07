@@ -20,6 +20,7 @@
 // -- When FACTORY_RESET_BUTTON_PIN is pulled to ground on startup, the Thing will use the initial
 //      password to buld an AP. (E.g. in case of lost password)
 #define FACTORY_RESET_BUTTON_PIN 35
+#define CONSTANTE_DE_PRUEBA 12345
 #endif
 
 //const char* ntpServer = "pool.ntp.org";
