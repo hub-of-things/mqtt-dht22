@@ -10,61 +10,100 @@ on:
 
 jobs:
   check-dependencies:
-    name: Check PlatformIO Dependencies
+    name: Verificación de Dependencias PlatformIO
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Clonar repositorio
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Configurar Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
           architecture: "x64"
 
-      - name: Install PlatformIO
+      - name: Instalar PlatformIO
         run: pip install platformio
 
-      - name: Check for outdated dependencies
+      - name: Comprobar dependencias desactualizadas
         run: pio pkg outdated
 
   static-analysis:
-    name: Static Code Analysis
+    name: Análisis Estático de Código
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Clonar repositorio
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Configurar Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
           architecture: "x64"
 
-      - name: Install PlatformIO
+      - name: Instalar PlatformIO
         run: pip install platformio
 
-      - name: Run Cppcheck
+      - name: Ejecutar Cppcheck
         run: pio check --skip-packages --fail-on-defect high
 
-      - name: Run Clang-Tidy
+      - name: Ejecutar Clang-Tidy
         run: pio check --skip-packages --tool clangtidy
 
-  build:
-    name: Build and Compile
+  build-analysis:
+    name: Construir y Compilar Proyecto
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Clonar repositorio
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Configurar Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
           architecture: "x64"
 
-      - name: Install PlatformIO
+      - name: Instalar PlatformIO
         run: pip install platformio
 
-      - name: Build project
+      - name: Compilar proyecto
         run: pio run
+
+  run-tests:
+    name: Ejecutar Pruebas
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          architecture: "x64"
+
+      - name: Instalar PlatformIO
+        run: pip install platformio
+
+      - name: Ejecutar Pruebas Unitarias
+        run: platformio test --environment esp32thing -f unit -v > result.log; tail -n 20 result.log
+
+  logging-and-monitoring:
+    name: Registro y Monitoreo de Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          architecture: "x64"
+
+      - name: Instalar PlatformIO
+        run: pip install platformio
+
+      - name: Generar logs del proceso de build
+        run: pio run -v > build_log.txt
+    
