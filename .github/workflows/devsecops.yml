@@ -1,0 +1,70 @@
+name: PlatformIO CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-dependencies:
+    name: Check PlatformIO Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          architecture: "x64"
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Check for outdated dependencies
+        run: pio pkg outdated
+
+  static-analysis:
+    name: Static Code Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          architecture: "x64"
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Run Cppcheck
+        run: pio check --skip-packages --fail-on-defect high
+
+      - name: Run Clang-Tidy
+        run: pio check --skip-packages --tool clangtidy
+
+  build:
+    name: Build and Compile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          architecture: "x64"
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Build project
+        run: pio run
