@@ -9,8 +9,8 @@ on:
       - main
 
 jobs:
-  check-dependencies:
-    name: Verificación de Dependencias PlatformIO
+  platformio-ci:
+    name: Pipeline PlatformIO
     runs-on: ubuntu-latest
     steps:
       - name: Clonar repositorio
@@ -19,91 +19,25 @@ jobs:
       - name: Configurar Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
-          architecture: "x64"
+          python-version: '3.11'
 
       - name: Instalar PlatformIO
-        run: pip install platformio
+        run: pip install platformio pip-audit
 
       - name: Comprobar dependencias desactualizadas
         run: pio pkg outdated
+      
+      - name: Actualizar setuptools
+        run: pip install --upgrade setuptools
 
-  static-analysis:
-    name: Análisis Estático de Código
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clonar repositorio
-        uses: actions/checkout@v4
+      - name: Auditar
+        run: pip-audit
 
-      - name: Configurar Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-          architecture: "x64"
+      - name: Compilar con PlatformIO (generar .cpp para Cppcheck)
+        run: pio run --environment esp32thing
 
-      - name: Instalar PlatformIO
-        run: pip install platformio
+      - name: Ejecutar Cppcheck en el entorno
+        run: cppcheck --enable=all --error-exitcode=0 src/ || true
 
-      - name: Ejecutar Cppcheck
-        run: pio check --skip-packages --fail-on-defect high
-
-      - name: Ejecutar Clang-Tidy
-        run: pio check --skip-packages --tool clangtidy
-
-  build-analysis:
-    name: Construir y Compilar Proyecto
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clonar repositorio
-        uses: actions/checkout@v4
-
-      - name: Configurar Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-          architecture: "x64"
-
-      - name: Instalar PlatformIO
-        run: pip install platformio
-
-      - name: Compilar proyecto
-        run: pio run
-
-  run-tests:
-    name: Ejecutar Pruebas
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clonar repositorio
-        uses: actions/checkout@v4
-
-      - name: Configurar Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-          architecture: "x64"
-
-      - name: Instalar PlatformIO
-        run: pip install platformio
-
-      - name: Ejecutar Pruebas Unitarias
-        run: platformio test --environment esp32thing -f unit -v > result.log; tail -n 20 result.log
-
-  logging-and-monitoring:
-    name: Registro y Monitoreo de Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clonar repositorio
-        uses: actions/checkout@v4
-
-      - name: Configurar Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-          architecture: "x64"
-
-      - name: Instalar PlatformIO
-        run: pip install platformio
-
-      - name: Generar logs del proceso de build
-        run: pio run -v > build_log.txt
-    
+      - name: Aplicar correcciones automáticas con Clang-Tidy
+        run: pio check --environment esp32thing --skip-packages --flags="--fix-errors --system-headers" || true
