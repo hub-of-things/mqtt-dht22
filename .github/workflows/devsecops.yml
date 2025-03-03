@@ -1,12 +1,15 @@
-name: PlatformIO CI/CD
+name: PlatformIO CI/CD & SonarCloud Analysis
 
 on:
   push:
     branches:
       - main
+      - src
+      - 'releases/**'
   pull_request:
     branches:
       - main
+    types: [opened, synchronize, reopened]
 
 jobs:
   platformio-ci:
@@ -41,3 +44,33 @@ jobs:
 
       - name: Aplicar correcciones automáticas con Clang-Tidy
         run: pio check --environment esp32thing --skip-packages --flags="--fix-errors --system-headers" || true
+
+  sonarcloud:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17  
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.organization=hub-of-things-1
+            -Dsonar.projectKey=hub-of-things_mqtt-dht22 
+            -Dsonar.host.url=https://sonarcloud.io/
+            -Dsonar.projectName=mqtt-dht22
+            -Dsonar.sources="src,include,lib,test"
+            -Dsonar.exclusions="**/node_modules/**,**/.pio/**,**/.platformio/**,**/build/**,**/output/**"
+            -Dsonar.branch.name=main
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
