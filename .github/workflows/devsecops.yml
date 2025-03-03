@@ -61,7 +61,7 @@ jobs:
           java-version: '17'
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
         with:
           args: >
             -Dsonar.organization=hub-of-things-1
