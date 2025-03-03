@@ -60,17 +60,17 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5.0.0
-        with:
-          args: >
-            -Dsonar.organization=hub-of-things-1
-            -Dsonar.projectKey=hub-of-things_mqtt-dht22 
-            -Dsonar.host.url=https://sonarcloud.io/
-            -Dsonar.projectName=mqtt-dht22
-            -Dsonar.sources="src,include,lib,test"
-            -Dsonar.exclusions="**/node_modules/**,**/.pio/**,**/.platformio/**,**/build/**,**/output/**"
-            -Dsonar.branch.name=main
+   #   - name: SonarCloud Scan
+   #     uses: SonarSource/sonarqube-scan-action@v5.0.0
+   #     with:
+   #       args: >
+   #         -Dsonar.organization=hub-of-things-1
+   #         -Dsonar.projectKey=hub-of-things_mqtt-dht22 
+   #         -Dsonar.host.url=https://sonarcloud.io/
+   #         -Dsonar.projectName=mqtt-dht22
+   #         -Dsonar.sources="src,include,lib,test"
+   #         -Dsonar.exclusions="**/node_modules/**,**/.pio/**,**/.platformio/**,**/build/**,**/output/**"
+   #         -Dsonar.branch.name=main
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
