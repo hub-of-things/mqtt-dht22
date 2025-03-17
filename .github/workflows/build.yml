@@ -51,6 +51,10 @@ jobs:
       - name: Run Build Wrapper
         run: |
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} pio run --environment esp32thing 
+      
+      - name: List build output directory
+        run: |
+          ls -la ${{ env.BUILD_WRAPPER_OUT_DIR }}
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
