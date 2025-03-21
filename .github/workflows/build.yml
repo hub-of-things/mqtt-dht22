@@ -46,20 +46,25 @@ jobs:
 
        - name: Generate compile_commands.json
          run: pio run -t compiledb
+
+       - name: Buscar compile_commands.json
+         run: find / -name compile_commands.json 2>/dev/null || echo "No encontrado"
+
+       - name: Verificar archivo compile_commands.json
+         run: ls -l ./
       
        - name: Instalar Build Wrapper
          uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v5
        
        - name: Compilar Wrapper con PlatformIO
          run: |
-           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} platformio run || true
+           build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory platformio run || true
        
        - name: SonarQube Scan
          uses: SonarSource/sonarqube-scan-action@v5
          env:
-           SONAR_TOKEN:  ${{ secrets.SONAR_TOKEN }}
+           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
          with:
            args: >
-             -Dsonar.cfamily.compile-commands="${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json"
-           
-        
+             -Dsonar.cfamily.compile-commands="./compile_commands.json"
+             -Dsonar.coverage.jacoco.reportPaths=""
