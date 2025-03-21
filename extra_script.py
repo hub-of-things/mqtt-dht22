@@ -11,7 +11,7 @@ version_tag = os.getenv("FIRMWARE_VERSION")
 
 env.Replace(PROGNAME="firmware_%s_%s" % (build_tag, version_tag))
 
-def after_build(env, os):
+def after_build(target, source, env):
     source_file = ".pio/build/esp32thing/compile_commands.json"
     destination_dir = "build_wrapper_output_directory/"
     
@@ -28,3 +28,4 @@ def after_build(env, os):
 
 # Esto se llama después de cada compilación
 env.AddPostAction("buildprog", after_build)
+
