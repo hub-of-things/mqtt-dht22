@@ -46,9 +46,6 @@ jobs:
 
        - name: Generate compile_commands.json
          run: pio run -t compiledb
-
-       - name: Copiar compile_commands.json al directorio de salida
-         run: cp .pio/build/esp32thing/compile_commands.json ${{ env.BUILD_WRAPPER_OUT_DIR }}/
       
        - name: Instalar Build Wrapper
          uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v5
