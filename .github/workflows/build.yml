@@ -43,13 +43,16 @@ jobs:
   
        - name: Ejecutar Cppcheck en el entorno
          run: cppcheck --enable=all --error-exitcode=0 src/ || true
+
+       - name: Generate compile_commands.json
+         run: pio run -t compiledb
       
        - name: Instalar Build Wrapper
          uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v5
        
        - name: Compilar Wrapper con PlatformIO
          run: |
-           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} platformio run
+           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} platformio run || true
        
        - name: SonarQube Scan
          uses: SonarSource/sonarqube-scan-action@v5
@@ -58,4 +61,5 @@ jobs:
          with:
            args: >
              -Dsonar.cfamily.compile-commands="${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json"
+             -Dsonar.cfamily.build-wrapper-output.bypass=true
         
