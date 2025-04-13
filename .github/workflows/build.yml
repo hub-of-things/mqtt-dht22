@@ -62,7 +62,6 @@ jobs:
            args: >
              -Dsonar.cfamily.compile-commands="./compile_commands.json"
              -Dsonar.coverage.jacoco.reportPaths=""
-
     
        - name: Instalar Trivy
          run: |
@@ -87,3 +86,4 @@ jobs:
                  -F "verified=false" \
                  -F "close_old_findings=false"
        
+
