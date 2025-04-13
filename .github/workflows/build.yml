@@ -46,12 +46,6 @@ jobs:
 
        - name: Generate compile_commands.json
          run: pio run -t compiledb
-
-       - name: Buscar compile_commands.json
-         run: find / -name compile_commands.json 2>/dev/null || echo "No encontrado"
-
-       - name: Verificar archivo compile_commands.json
-         run: ls -l ./
       
        - name: Instalar Build Wrapper
          uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v5
