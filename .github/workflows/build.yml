@@ -46,12 +46,6 @@ jobs:
 
        - name: Generate compile_commands.json
          run: pio run -t compiledb
-
-       - name: Buscar compile_commands.json
-         run: find / -name compile_commands.json 2>/dev/null || echo "No encontrado"
-
-       - name: Verificar archivo compile_commands.json
-         run: ls -l ./
       
        - name: Instalar Build Wrapper
          uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v5
@@ -68,3 +62,28 @@ jobs:
            args: >
              -Dsonar.cfamily.compile-commands="./compile_commands.json"
              -Dsonar.coverage.jacoco.reportPaths=""
+
+    
+       - name: Instalar Trivy
+         run: |
+               sudo apt-get update
+               sudo apt-get install -y wget apt-transport-https gnupg lsb-release curl
+               wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+               echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/trivy.list
+               sudo apt-get update
+               sudo apt-get install -y trivy
+     
+       - name: Escanear sistema de archivos con Trivy
+         run: trivy fs --format json --output trivy-results.json .
+     
+       - name: Subir reporte a DefectDojo
+         run: |
+               curl -X POST "${{ secrets.DEFECTDOJO_URL }}/api/v2/import-scan/" \
+                 -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
+                 -F "scan_type=Trivy Scan" \
+                 -F "engagement=${{ secrets.DEFECTDOJO_ENGAGEMENT_ID }}" \
+                 -F "file=@trivy-results.json" \
+                 -F "active=true" \
+                 -F "verified=false" \
+                 -F "close_old_findings=false"
+       
