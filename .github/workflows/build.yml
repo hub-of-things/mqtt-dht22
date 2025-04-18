@@ -66,7 +66,7 @@ jobs:
        - name: Descargar reporte SonarCloud
          run: |
           curl -s -u ${{ secrets.SONAR_TOKEN }}: \
-          "https://sonarcloud.io/api/issues/search?componentKeys=ub-of-things_mqtt-dht22&resolved=false" \
+          "https://sonarcloud.io/api/issues/search?componentKeys=hub-of-things_mqtt-dht22&statuses=OPEN,CONFIRMED" \
           -o sonarcloud-report.json
          
        - name: Subir reporte a DefectDojo
