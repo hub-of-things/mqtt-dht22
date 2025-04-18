@@ -63,27 +63,21 @@ jobs:
              -Dsonar.cfamily.compile-commands="./compile_commands.json"
              -Dsonar.coverage.jacoco.reportPaths=""
 
-    
-       - name: Instalar Trivy
+       - name: Descargar reporte SonarCloud
          run: |
-               sudo apt-get update
-               sudo apt-get install -y wget apt-transport-https gnupg lsb-release curl
-               wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-               echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/trivy.list
-               sudo apt-get update
-               sudo apt-get install -y trivy
-     
-       - name: Escanear sistema de archivos con Trivy
-         run: trivy fs --format json --output trivy-results.json .
-     
+          curl -s -u ${{ secrets.SONAR_TOKEN }}: \
+          "https://sonarcloud.io/api/issues/search?componentKeys=ub-of-things_mqtt-dht22&resolved=false" \
+          -o sonarcloud-report.json
+         
        - name: Subir reporte a DefectDojo
          run: |
-               curl -X POST "${{ secrets.DEFECTDOJO_URL }}/api/v2/import-scan/" \
-                 -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
-                 -F "scan_type=Trivy Scan" \
-                 -F "engagement=${{ secrets.DEFECTDOJO_ENGAGEMENT_ID }}" \
-                 -F "file=@trivy-results.json" \
-                 -F "active=true" \
-                 -F "verified=false" \
-                 -F "close_old_findings=false"
-       
+          curl -X POST "${{ secrets.DEFECTDOJO_URL }}/api/v2/import-scan/" \
+            -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
+            -F "scan_type=SonarQube Scan" \
+            -F "engagement=${{ secrets.DEFECTDOJO_ENGAGEMENT_ID }}" \
+            -F "file=@sonarcloud-report.json" \
+            -F "active=true" \
+            -F "verified=false" \
+            -F "close_old_findings=false"
+        
+     
