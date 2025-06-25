@@ -86,4 +86,3 @@ jobs:
                  -F "verified=false" \
                  -F "close_old_findings=false"
        
-
