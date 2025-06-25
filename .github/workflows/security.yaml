@@ -7,6 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory
+      COMPILATIONDB_PATH: build_wrapper_output_directory
     steps:
       # Checkout the repository
       - name: Checkout repo
