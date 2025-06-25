@@ -42,8 +42,7 @@ jobs:
         with:
           # Consult https://docs.sonarsource.com/sonarqube-server/latest/analyzing-source-code/scanners/sonarscanner/ for more information and options
           args: >
-            --define sonar.projectKey=Strooom_MuMo-v2-Node-SW \
-            --define sonar.organization=strooom-1 \
-            --define sonar.coverageReportPaths=coverage.xml
+            --define sonar.cfamily.compile-commands="${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json" 
+
 
         
