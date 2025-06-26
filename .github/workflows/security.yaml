@@ -21,19 +21,9 @@ jobs:
       - name: Install PlatformIO
         run: python -m pip install platformio==6.1.11 pip-audit
         # build the and extract de version from the results
-      - name: Build firmwares
-        run: FIRMWARE_VERSION=main platformio run
-        
-      # donde guardamos los resultados del cppchek?
-      # por ahi lo podemos poner como checkeo antes del merge?
-      - name: Ejecutar Cppcheck en el entorno
-        run: cppcheck --enable=all --error-exitcode=0 src/ || true
-
-      - name: Set envirioment variables
-        # https://docs.platformio.org/en/latest/integration/compile_commands.html  
-        run: echo "COMPILATIONDB_PATH=$(echo $RUNNER_TEMP)" >> $GITHUB_ENV
-      - name: Generate compile_commands.json
-        run: pio run -t compiledb
+      - name: Compilar Wrapper con PlatformIO
+        run: |
+          build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory platformio run || true
         
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
@@ -43,7 +33,7 @@ jobs:
         with:
           # Consult https://docs.sonarsource.com/sonarqube-server/latest/analyzing-source-code/scanners/sonarscanner/ for more information and options
           args: >
-            --define sonar.cfamily.compile-commands="${{ env.COMPILATIONDB_PATH }}/compile_commands.json" 
+            --define sonar.cfamily.compile-commands="./compile_commands.json" 
 
 
         
