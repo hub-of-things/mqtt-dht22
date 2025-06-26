@@ -24,7 +24,9 @@ jobs:
       - name: Compilar Wrapper con PlatformIO
         run: |
           build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory platformio run || true
-        
+      - name: ver archivos
+        run: |
+          find . | sed -e "s/[^-][^\/]*\// |/g" -e "s/|\([^ ]\)/|-\1/"
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
@@ -33,7 +35,7 @@ jobs:
         with:
           # Consult https://docs.sonarsource.com/sonarqube-server/latest/analyzing-source-code/scanners/sonarscanner/ for more information and options
           args: >
-            --define sonar.cfamily.compile-commands="./compile_commands.json" 
+            --define sonar.cfamily.compile-commands="compile_commands.json" 
 
 
         
