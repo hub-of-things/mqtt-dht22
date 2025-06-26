@@ -5,8 +5,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    env:
-      BUILD_WRAPPER_OUT_DIR: /build_wrapper_output_directory
     steps:
       # Checkout the repository
       - name: Checkout repo
@@ -16,24 +14,27 @@ jobs:
       # Set up the environment for the build
       - name: Set up python
         uses: actions/setup-python@v5.4.0
-
+        with:
+          python-version: '3.12'
       - name: Instalar Build Wrapper
         uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v5
-       
-
       - name: Install PlatformIO
         run: python -m pip install platformio==6.1.11 pip-audit
         # build the and extract de version from the results
       - name: Build firmwares
         run: FIRMWARE_VERSION=main platformio run
-
+        
       # donde guardamos los resultados del cppchek?
       # por ahi lo podemos poner como checkeo antes del merge?
       - name: Ejecutar Cppcheck en el entorno
         run: cppcheck --enable=all --error-exitcode=0 src/ || true
 
+      - name: Set envirioment variables
+        # https://docs.platformio.org/en/latest/integration/compile_commands.html  
+        run: echo "COMPILATIONDB_PATH=$(echo $RUNNER_TEMP)" >> $GITHUB_ENV
       - name: Generate compile_commands.json
         run: pio run -t compiledb
+        
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
@@ -42,7 +43,7 @@ jobs:
         with:
           # Consult https://docs.sonarsource.com/sonarqube-server/latest/analyzing-source-code/scanners/sonarscanner/ for more information and options
           args: >
-            --define sonar.cfamily.compile-commands="${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json" 
+            --define sonar.cfamily.compile-commands="${{ env.COMPILATIONDB_PATH }}/compile_commands.json" 
 
 
         
