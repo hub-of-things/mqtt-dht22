@@ -150,6 +150,15 @@ sequenceDiagram
 
 ## REFERENCIAS UTILES 
 
+conectar dd a sonarqube
+se confoigura el api qye de sonar qube
+https://docs.defectdojo.com/en/connecting_your_tools/parsers/api/sonarqube/
+
+Aca dice como tenes uqe hacer para correr la importacion (ver si se puede automatizar)
+https://docs.defectdojo.com/en/connecting_your_tools/parsers/api/
+
+
+
 Esta opcion usa un compilation db 
 https://piolabs.com/blog/insights/sonarcloud-platformio-ci-workflow.html
 
