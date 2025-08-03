@@ -31,6 +31,9 @@ jobs:
       - name: Compilar con PlatformIO
         run: |
           build-wrapper-linux-x86-64 --out-dir ${{env.BUILD_WRAPPER_OUT_DIR}} platformio run || true
+    
+      - name: Análisis estático de codigo fuente con cppcheck y clang-tidy
+        run:  platformio check --environment esp32thing
 
       - name: Análisis SonarQube
         uses: SonarSource/sonarqube-scan-action@v5
@@ -49,3 +52,5 @@ jobs:
           pip install -r requirements.txt
           pip install pip-audit
           pip-audit
+      
+   
