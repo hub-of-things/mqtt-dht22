@@ -45,4 +45,10 @@ jobs:
             --define sonar.cfamily.compile-commands="${{env.BUILD_WRAPPER_OUT_DIR}}/compile_commands.json"
 
       - name: Verificar librerías inseguras
-        run: pip-audit
+        run: |
+          python -m venv audit-venv
+          source audit-venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pip-audit
+          pip-audit
