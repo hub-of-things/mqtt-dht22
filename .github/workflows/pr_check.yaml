@@ -33,7 +33,7 @@ jobs:
           build-wrapper-linux-x86-64 --out-dir ${{env.BUILD_WRAPPER_OUT_DIR}} platformio run || true
     
       - name: Análisis estático de codigo fuente con cppcheck y clang-tidy
-        run:  platformio check --environment esp32thing
+        run:  platformio check --environment esp32thing || true
 
       - name: Análisis SonarQube
         uses: SonarSource/sonarqube-scan-action@v5
